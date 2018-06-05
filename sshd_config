@@ -1,0 +1,49 @@
+ssh的配置文件：/etc/ssh/sshd_config
+1.更改ssh远程登录的端口，先设置selinux，开放端口
+semanage port -a -t ssh_port_t -p tcp 2222
+更改端口编辑配置文件
+port 2222
+2.设置root用户不能远程登录
+PermitRootLogin yes
+3.设置不能远程登录
+PasswordAuthentication no
+4.设置特定ip登录；
+AllowUsers root@192.168.10.15
+5.设置密钥，免密登录
+[root@localhost admin]# ssh-keygen 
+Generating public/private rsa key pair. 
+Enter file in which to save the key (/root/.ssh/id_rsa): 
+Enter passphrase (empty for no passphrase): 
+Enter same passphrase again: 
+Your identification has been saved in /root/.ssh/id_rsa. 
+Your public key has been saved in /root/.ssh/id_rsa.pub. 
+The key fingerprint is: 
+7e:fa:8c:c4:a5:0d:e0:db:8e:87:25:15:4a:d2:9b:0b root@localhost.localdomain 
+The key’s randomart image is: 
++–[ RSA 2048]—-+ 
+| . | 
+| . o . | 
+| o.+ . | 
+| E.+.. | 
+| ..oS . | 
+| o=.= | 
+| .+* o | 
+| .+.= | 
+| ..+.o | 
++—————–+
+
+把生成的公钥发送到对方的主机上去，用ssh-copy-id命令，自动保存在对方主机的/root/.ssh/authorized_keys 文件中去
+
+[root@localhost ~]# ssh-copy-id -i /root/.ssh/id_rsa.pub root@192.168.138.165
+/usr/bin/ssh-copy-id: INFO: attempting to log in with the new key(s), to filter out any that are already installed 
+/usr/bin/ssh-copy-id: INFO: 1 key(s) remain to be installed – if you are prompted now it is to install the new keys 
+root@192.168.138.165’s password: 
+Hello world
+
+Number of key(s) added: 1
+
+Now try logging into the machine, with: “ssh >’root@192.168.142.84’” 
+and check to make sure that only the key(s) you wanted were added.
+
+[root@localhost ~]# ssh 192.168.138.165 登录不需要密码了
+
